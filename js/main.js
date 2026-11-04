@@ -2,7 +2,7 @@
 (function () {
   const P = window.PYT, h = P.h;
   const TABS = [
-    { id: "db", label: "Databáza", init: () => P.initDb && P.initDb() },
+    { id: "db", label: P.ZIAK ? "Trénovať" : "Databáza", init: () => P.initDb && P.initDb() },
     { id: "sheet", label: "Pracovný list", init: () => P.initSheet && P.initSheet(), badge: () => P.cart.ids.length },
     { id: "custom", label: "Moje úlohy", init: () => P.initCustom && P.initCustom() },
     { id: "overview", label: "Prehľad dát", init: () => P.initOverview && P.initOverview() },

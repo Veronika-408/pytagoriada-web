@@ -64,7 +64,21 @@
         h("button", { class: "btn", type: "button", onclick: () => P.dbSetFilter({ typ_triku: id }) }, `Všetkých ${n} úloh tohto typu v databáze →`)));
   }
 
+  // žiak: len katalóg trikov (bez tabuliek a percent)
+  function renderZiak() {
+    const all = dataset();
+    const set = mode === "vsetky" ? all : all.filter((u) => u.kategoria === mode);
+    const c = counts(set), ids = Object.keys(c).filter((i) => i !== "iny").sort((a, b) => c[b] - c[a]);
+    host.replaceChildren(h("div", { class: "page" },
+      h("h2", null, "Triky"),
+      h("p", { class: "lead" }, "V Pytagoriáde sa opakujú tie isté typy úloh. Keď typ spoznáš, vieš, ako začať. Rozbaľ trik – nájdeš, ako ho spoznať, postup, na čo si dať pozor a príklady. Hore sú najčastejšie."),
+      h("div", { class: "chips", style: "margin:1rem 0" }, ["vsetky", ...P.KATEGORIE].map((k) =>
+        h("button", { class: "chip", type: "button", "aria-pressed": mode === k, onclick: () => { mode = k; render(); } }, k === "vsetky" ? "všetky kategórie" : k))),
+      h("div", { class: "catalog" }, ids.map((id) => catalogCard(id, c[id], set)))));
+  }
+
   function render() {
+    if (P.ZIAK) return renderZiak();
     const all = dataset();
     const set = mode === "vsetky" ? all : all.filter((u) => u.kategoria === mode);
     const c = counts(set), ids = Object.keys(c).sort((a, b) => c[b] - c[a]);
@@ -86,5 +100,5 @@
   }
 
   P.initAnalyzaUloh = function () { host = document.getElementById("panel-analyza"); render(); };
-  P.registerTab({ id: "analyza", label: "Analýza úloh", init: () => P.initAnalyzaUloh() });
+  P.registerTab({ id: "analyza", label: P.ZIAK ? "Triky" : "Analýza úloh", init: () => P.initAnalyzaUloh() });
 })();

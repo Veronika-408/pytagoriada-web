@@ -58,6 +58,9 @@
     return el;
   };
 
+  // replaceChildren, ktoré vynechá null/false (inak by sa vypísalo slovo "null")
+  P.fill = (el, ...kids) => el.replaceChildren(...kids.flat().filter((k) => k != null && k !== false));
+
   P.isUrl = (s) => /^https?:\/\//i.test(s || "");
 
   // Odkaz na pôvodné PDF (leží o priečinok vyššie). Pri textových PDF aj priamo na stranu úlohy.

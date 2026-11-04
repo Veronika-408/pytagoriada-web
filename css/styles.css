@@ -73,6 +73,7 @@ button{font:inherit;color:inherit}
 .rail{width:300px;flex:0 0 300px;position:sticky;top:57px;max-height:calc(100vh - 57px);overflow:auto;padding:1.1rem 1.1rem 4rem;border-right:1px solid var(--line);
   background:repeating-linear-gradient(var(--surface-2),var(--surface-2) 27px,var(--line-soft) 28px)}
 .rail section{margin-bottom:1.35rem}
+.rail-toggle{display:none;width:100%;margin-bottom:.8rem;font-weight:600}
 .rail h2{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:baseline}
 .rail .okruh-name{font-size:.72rem;color:var(--ink-faint);margin:.7rem 0 .15rem;font-weight:600}
 .input{width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem}
@@ -132,6 +133,13 @@ body.locked{overflow:hidden}
 .try-ok{color:var(--good);font-weight:700}
 .try-bad{color:var(--bad);font-weight:600;margin-bottom:.3rem}
 @media print{.try,.ziak-chip{display:none!important}}
+.card.solo{grid-template-columns:1fr}
+.mode-switch .chip{font-size:.86rem;padding:.35rem .8rem}
+.next-row{justify-content:flex-end;margin:.2rem 0 1.5rem}
+.next-row .btn{padding:.65rem 1.4rem}
+.more-filters{margin:-.4rem 0 1rem}
+.more-filters summary{cursor:pointer;font-size:.82rem;color:var(--ink-soft);padding:.3rem 0}
+.more-filters[open] summary{margin-bottom:.5rem}
 
 /* matematika (js/mat.js) */
 .m{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.08em;white-space:nowrap;line-height:1}
@@ -148,6 +156,8 @@ body.locked{overflow:hidden}
 .m .m-radicand{border-top:1px solid currentColor;padding:.08em .1em 0;display:inline-flex;align-items:center}
 .m .m-root{font-size:.6em;margin-right:-.5em;align-self:flex-start}
 .m .m-over{border-top:1px solid currentColor}
+.m .m-col{display:inline-flex;flex-direction:column;align-items:flex-end;vertical-align:middle;margin:.3rem .4rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.95em;line-height:1.35;white-space:pre}
+.m .m-col-sum{border-top:1.5px solid currentColor;align-self:stretch;text-align:right}
 .m .m-lr{display:inline-flex;align-items:stretch;vertical-align:middle}
 .m .m-lr-in{display:inline-flex;align-items:center}
 .m .m-delim{width:.42em;height:auto;flex:none;align-self:stretch;overflow:visible}
@@ -258,7 +268,9 @@ table.cov td.sep{border-left:1px solid var(--line-soft)}
 }
 @media (max-width:900px){
   .db-layout{flex-direction:column}
-  .rail{position:static;width:100%;flex:none;max-height:none}
+  .rail{position:static;width:100%;flex:none;max-height:none;padding-bottom:.6rem}
+  .rail-toggle{display:block}
+  .rail:not(.open)>section:not(:nth-of-type(1)),.rail:not(.open)>p,.rail:not(.open)>details{display:none}
   .sheet-layout{grid-template-columns:1fr}
   .controls{position:static}
   .results{padding:1rem 1rem 7rem}
@@ -290,7 +302,13 @@ table.share th .sub{font-weight:400;font-size:.72rem;color:var(--ink-faint)}
 .quiz-opt.wrong{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .quiz-fb{background:var(--surface-2);border-radius:10px;padding:.8rem 1rem;margin-bottom:1rem}
 .quiz-fb ol{margin:.3rem 0 .8rem 1.2rem;padding:0}
-@media (max-width:640px){.quiz-opts{grid-template-columns:1fr}}
+@media (max-width:640px){.quiz-opts{grid-template-columns:1fr}
+  /* mobil: hlavička sa posúva so stránkou, aby nezaberala tretinu obrazovky */
+  .chrome{position:static;gap:.4rem .8rem;padding:.5rem 16px}
+  .brand h1{font-size:1.1rem}
+  .tab{padding:.4rem .6rem;font-size:.88rem}
+  .page{padding:1rem 16px 4rem}
+  .results{padding:1rem 16px 7rem}}
 
 /* ---------- výsledky ---------- */
 .toolbar.filters{gap:1rem 1.4rem}

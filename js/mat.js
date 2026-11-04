@@ -71,6 +71,11 @@
           if (src.startsWith("\\right", i)) { i += 6; r = readDelim(); }
           return { t: "lr", l, r, k };
         }
+        if (cmd === "stlpec") {             // písomné sčítanie/odčítanie pod sebou: \stlpec{9A7}{−B23}{86C}
+          const riadky = [];
+          for (;;) { skip(); if (src[i] !== "{") break; const j = src.indexOf("}", i); riadky.push(src.slice(i + 1, j)); i = j + 1; }
+          return { t: "col", riadky };
+        }
         if (cmd === "text" || cmd === "mathrm" || cmd === "textrm") return { t: "text", k: readArg() };
         if (cmd === "overline") return { t: "over", a: readArg() };
         if (SYM[cmd] != null) return { t: "op", v: SYM[cmd] };
@@ -124,6 +129,8 @@
         case "frac": frag.append(h("span", { class: "m-frac" }, h("span", { class: "m-n" }, build(n.a)), h("span", { class: "m-d" }, build(n.b)))); break;
         case "sup": frag.append(h("span", { class: "m-base" }, build([n.base])), h("sup", { class: "m-sup" }, build(n.arg))); break;
         case "sub": frag.append(h("span", { class: "m-base" }, build([n.base])), h("sub", { class: "m-sub" }, build(n.arg))); break;
+        case "col": frag.append(h("span", { class: "m-col" }, n.riadky.map((r, k) =>
+          h("span", { class: "m-col-r" + (k === n.riadky.length - 1 ? " m-col-sum" : "") }, r.replace(/-/g, "−"))))); break;
         case "over": frag.append(h("span", { class: "m-over" }, build(n.a))); break;
         case "sqrt": frag.append(h("span", { class: "m-sqrt" }, n.n ? h("sup", { class: "m-root" }, build(n.n)) : null, h("span", { class: "m-rad" }, "√"), h("span", { class: "m-radicand" }, build(n.a)))); break;
         case "lr": {
