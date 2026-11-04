@@ -19,13 +19,17 @@
 
   // ---------- pokrok ----------
   const pkKey = () => "pokrok." + (P.profil() ? P.profil().k : "-");
+  P.trvanie = (s) => (s == null ? "–" : s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")} s`);
   P.pokrok = {
     vsetko: () => P.store.read(pkKey(), {}),
     get: (id) => P.pokrok.vsetko()[id] || null,
     // ok: true/false; pokusy sa počítajú, "správne" ostane, keď to žiak raz vyriešil
-    zapis(id, ok) {
+    zapis(id, ok, sek) {
       const all = P.pokrok.vsetko(), r = all[id] || { pokusy: 0, ok: false };
-      r.pokusy++; r.ok = r.ok || ok; r.posledne = ok; r.t = Date.now();
+      r.pokusy++; r.posledne = ok; r.t = Date.now();
+      if (sek != null) r.cas = sek;
+      if (ok && !r.ok && sek != null) r.casOk = sek;   // čas, za ktorý to žiak prvýkrát vyriešil
+      r.ok = r.ok || ok;
       all[id] = r; P.store.write(pkKey(), all); P.emit("pokrok", id);
     },
     oprav(id) {   // "mal(a) som to správne, len iný zápis"
@@ -128,20 +132,25 @@
     const p = P.profil(), all = P.pokrok.vsetko(), ul = new Map(P.ULOHY.map((u) => [u.id, u]));
     const zaz = Object.entries(all).filter(([id]) => ul.has(id)).map(([id, r]) => Object.assign({ u: ul.get(id) }, r));
     const ok = zaz.filter((r) => r.ok).length, zle = zaz.filter((r) => !r.ok);
+    const priemer = (a) => (a.length ? Math.round(a.reduce((s, x) => s + x, 0) / a.length) : null);
+    const casy = zaz.map((r) => r.casOk).filter((x) => x != null);
     const podla = (f, nazov) => {
-      const m = new Map(); zaz.forEach((r) => { const k = f(r.u); const e = m.get(k) || { n: 0, ok: 0 }; e.n++; if (r.ok) e.ok++; m.set(k, e); });
-      return h("div", { class: "table-wrap" }, h("table", { class: "cov" }, h("thead", null, h("tr", null, h("th", null, nazov), h("th", null, "Skúšal(a)"), h("th", null, "Správne"), h("th", null, "Úspešnosť"))),
+      const m = new Map(); zaz.forEach((r) => { const k = f(r.u); const e = m.get(k) || { n: 0, ok: 0, cas: [] }; e.n++; if (r.ok) e.ok++; if (r.casOk != null) e.cas.push(r.casOk); m.set(k, e); });
+      return h("div", { class: "table-wrap" }, h("table", { class: "cov" }, h("thead", null, h("tr", null, h("th", null, nazov), h("th", null, "Skúšal(a)"), h("th", null, "Správne"), h("th", null, "Úspešnosť"), h("th", null, "Priem. čas"))),
         h("tbody", null, [...m.entries()].sort((a, b) => b[1].n - a[1].n).map(([k, e]) => h("tr", null, h("td", null, k), h("td", null, e.n), h("td", null, e.ok),
-          h("td", { class: "shade", style: `--p:${Math.round((e.ok / e.n) * 55)}%` }, Math.round((100 * e.ok) / e.n) + " %"))))));
+          h("td", { class: "shade", style: `--p:${Math.round((e.ok / e.n) * 55)}%` }, Math.round((100 * e.ok) / e.n) + " %"),
+          h("td", null, P.trvanie(priemer(e.cas))))))));
     };
     pokrokHost.replaceChildren(h("div", { class: "page" },
       h("h2", null, `Môj pokrok${p ? " – " + p.meno : ""}`),
-      h("p", { class: "lead" }, "V Databáze napíš pri úlohe svoju odpoveď a klikni „Skontrolovať“. Tu uvidíš, ako sa ti darí."),
+      h("p", { class: "lead" }, "V záložke Trénovať napíš pri úlohe svoju odpoveď a klikni „Skontrolovať“. Tu uvidíš, ako sa ti darí a ako rýchlo riešiš."),
       h("div", { class: "tiles" },
         h("div", { class: "tile" }, h("div", { class: "tl" }, "Skúšané úlohy"), h("div", { class: "tv mono" }, zaz.length)),
         h("div", { class: "tile" }, h("div", { class: "tl" }, "Vyriešené správne"), h("div", { class: "tv mono" }, ok)),
         h("div", { class: "tile" }, h("div", { class: "tl" }, "Úspešnosť"), h("div", { class: "tv mono" }, zaz.length ? Math.round((100 * ok) / zaz.length) + " %" : "–")),
-        h("div", { class: "tile" }, h("div", { class: "tl" }, "Treba zopakovať"), h("div", { class: "tv mono" }, zle.length))),
+        h("div", { class: "tile" }, h("div", { class: "tl" }, "Treba zopakovať"), h("div", { class: "tv mono" }, zle.length)),
+        h("div", { class: "tile" }, h("div", { class: "tl" }, "Priemerný čas na správnu úlohu"), h("div", { class: "tv mono" }, P.trvanie(priemer(casy))))),
+      P.sutazHistoria ? P.sutazHistoria() : null,
       zaz.length ? [
         h("h3", { class: "sec" }, "Podľa témy"), podla((u) => P.temaNazov(u.tema), "Téma"),
         h("h3", { class: "sec" }, "Podľa typu triku"), podla((u) => (P.TRIKY[u.typ_triku] || { n: "–" }).n, "Typ triku"),

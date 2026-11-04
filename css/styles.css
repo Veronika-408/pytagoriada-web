@@ -134,6 +134,13 @@ body.locked{overflow:hidden}
 .try-bad{color:var(--bad);font-weight:600;margin-bottom:.3rem}
 @media print{.try,.ziak-chip{display:none!important}}
 .card.solo{grid-template-columns:1fr}
+.stopky{font-size:.9rem;color:var(--ink-soft)}
+.sutaz-bar{position:sticky;top:0;z-index:20;display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.odpocet{font-size:1.3rem;font-weight:600}
+.odpocet.malo{color:var(--bad)}
+.sutaz-uloha .try{border-top:0;padding-top:0}
+.pravidla{margin:.2rem 0 1rem 1.1rem;padding:0;font-size:.88rem;color:var(--ink-soft)}
+.note.good-note{background:var(--good-bg);color:var(--good);padding:.6rem .8rem;border-radius:8px;font-weight:600;margin-top:1rem}
 .mode-switch .chip{font-size:.86rem;padding:.35rem .8rem}
 .next-row{justify-content:flex-end;margin:.2rem 0 1.5rem}
 .next-row .btn{padding:.65rem 1.4rem}

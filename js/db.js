@@ -170,7 +170,10 @@
   function odpovedBox(u) {
     const box = h("div", { class: "try" });
     if (!u.odpoved) { box.append(h("span", { class: "note" }, "K tejto úlohe nemáme odpoveď v kľúči – vyrieš ju a porovnaj so spolužiakmi.")); return box; }
-    const inp = h("input", { class: "input", type: "text", inputmode: "text", placeholder: "tvoja odpoveď", "aria-label": "Tvoja odpoveď", autocomplete: "off" });
+    // stopky: v režime "úloha za úlohou" od zobrazenia úlohy, v zozname od prvého kliknutia do políčka
+    let t0 = state.rezim === "jedna" ? Date.now() : null;
+    const inp = h("input", { class: "input", type: "text", inputmode: "text", placeholder: "tvoja odpoveď", "aria-label": "Tvoja odpoveď", autocomplete: "off",
+      onfocus: () => { if (t0 == null) t0 = Date.now(); } });
     const fb = h("div", { class: "try-fb", "aria-live": "polite" });
     const riesenie = (ok) => h("div", { class: "answer" }, h("span", null, "Správna odpoveď: ", h("b", null, u.odpoved)),
       u.trik ? h("span", { class: "trik" }, "Trik: " + u.trik) : null,
@@ -179,8 +182,10 @@
     const skontroluj = () => {
       const v = P.porovnaj(inp.value, u.odpoved);
       if (v === null) { fb.replaceChildren(h("span", { class: "note" }, "Najprv napíš odpoveď.")); return; }
-      P.pokrok.zapis(u.id, v);
-      fb.replaceChildren(v ? h("div", { class: "try-ok" }, "✓ Správne!") : h("div", { class: "try-bad" }, "✗ Nie je to správne. Skús ešte raz, alebo si pozri riešenie."),
+      const sek = t0 == null ? null : Math.round((Date.now() - t0) / 1000);
+      P.pokrok.zapis(u.id, v, sek);
+      if (v) zastavStopky();
+      fb.replaceChildren(v ? h("div", { class: "try-ok" }, "✓ Správne!" + (sek != null ? ` (za ${P.trvanie(sek)})` : "")) : h("div", { class: "try-bad" }, "✗ Nie je to správne. Skús ešte raz, alebo si pozri riešenie."),
         v ? riesenie(true) : h("button", { class: "btn", type: "button", onclick: () => fb.append(riesenie(false)) }, "Ukázať riešenie"));
     };
     inp.addEventListener("keydown", (e) => { if (e.key === "Enter") skontroluj(); });
@@ -232,7 +237,15 @@
     const z = ina.length ? ina : pool;
     return z.length ? z[Math.floor(Math.random() * z.length)].id : null;
   }
+  let stopkyTimer = null;
+  function zastavStopky() { if (stopkyTimer) clearInterval(stopkyTimer); stopkyTimer = null; }
+  function spustiStopky(el) {
+    zastavStopky(); const t0 = Date.now();
+    const tik = () => { const s = Math.floor((Date.now() - t0) / 1000); el.textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+    tik(); stopkyTimer = setInterval(() => (el.isConnected ? tik() : zastavStopky()), 1000);
+  }
   function renderZiak(filtre) {
+    zastavStopky();
     const prepinac = h("div", { class: "chips mode-switch" },
       [["jedna", "Úloha za úlohou"], ["zoznam", "Zoznam úloh"]].map(([k, t]) =>
         h("button", { class: "chip", type: "button", "aria-pressed": state.rezim === k, onclick: () => { state.rezim = k; renderResults(); } }, t)));
@@ -244,10 +257,12 @@
       const u = current.find((x) => x.id === state.jednaId);
       const ries = current.filter((x) => P.pokrok.get(x.id)).length, dobre = current.filter((x) => (P.pokrok.get(x.id) || {}).ok).length;
       const dalsia = () => { state.jednaId = vyberUlohu(); renderResults(); window.scrollTo({ top: 0 }); };
+      const hodiny = h("span", { class: "stopky mono", title: "Ako dlho riešiš túto úlohu" });
       P.fill(resultsEl, filtre, h("div", { class: "toolbar" }, prepinac, h("span", { class: "sp" }), napoveda),
-        h("p", { class: "note" }, `Z ${current.length} úloh si skúšal(a) ${ries}, správne ${dobre}.`),
+        h("div", { class: "row", style: "justify-content:space-between" }, h("p", { class: "note", style: "margin:0" }, `Z ${current.length} úloh si skúšal(a) ${ries}, správne ${dobre}.`), hodiny),
         card(u),
         h("div", { class: "row next-row" }, h("button", { class: "btn primary", type: "button", id: "dalsia", onclick: dalsia }, "Ďalšia úloha →")));
+      spustiStopky(hodiny);
       return;
     }
     const list = current.slice(0, state.shown);
