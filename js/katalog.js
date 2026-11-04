@@ -1,0 +1,142 @@
+/* Katalóg typov triku: názvy a texty pre tréning. Texty píše autor nástroja (nie sú z oficiálnych riešení);
+   časy sú orientačné odhady na kontrolu a úpravu učiteľkou. Príklady úloh sa vyberajú naživo z databázy. */
+(function () {
+  const P = (window.PYT = window.PYT || {});
+  // poradie = poradie v katalógu (podľa frekvencie sa zoraďuje v UI)
+  P.TRIKY = {
+    uprava_vyrazu: {
+      n: "Úprava výrazu: spoločný činiteľ, vyrušenie",
+      spoznas: "Dlhý výraz s veľkými číslami, ktoré sa opakujú, alebo sú „takmer rovnaké“ (napr. 154·9·11 − 33·3·2·77); často je vo výraze zátvorka s hodnotou 0.",
+      postup: ["Pozri sa, či sa nejaké číslo alebo zátvorka opakuje.", "Vyber spoločný činiteľ pred zátvorku alebo rozlož čísla na súčin (33 = 3·11, 77 = 7·11).", "Hľadaj opačné členy, ktoré sa vyrušia, alebo činiteľ 0, ktorý vynuluje celý súčin.", "Až potom počítaj – zvyčajne zostane malý výraz."],
+      pasce: "Počítať „narovinu“ s veľkými číslami a pomýliť sa; prehliadnuť nulu skrytú v zátvorke; po vybratí pred zátvorku zabudnúť na členy bez činiteľa.",
+      cas: "s trikom ~0,5–1 min, narovinu 3–5 min",
+    },
+    geometricka_vlastnost: {
+      n: "Geometrická vlastnosť alebo vzorec",
+      spoznas: "Úloha o uhloch, obvode, obsahu, objeme, vlastnostiach trojuholníka, štvorca, kocky; často s obrázkom.",
+      postup: ["Napíš si, čo je dané, a nakresli si náčrt aj keď obrázok je.", "Vyber správnu vlastnosť (súčet uhlov v trojuholníku 180°, v n-uholníku (n−2)·180°, rovnoramennosť, stredná priečka…).", "Dosaď a skontroluj jednotky (cm², cm³)."],
+      pasce: "Zámena obvodu a obsahu; zabudnutá premena jednotiek; spoliehanie sa na nepresný obrázok.",
+      cas: "s trikom ~1 min, bez vlastnosti úlohu často nevyriešiš",
+    },
+    systematicke_pocitanie: {
+      n: "Systematické počítanie prípadov",
+      spoznas: "„Koľko je…“ trojuholníkov, obdĺžnikov, čísel, ciest; počítanie cifier, strán, kôl.",
+      postup: ["Rozdeľ prípady podľa veľkosti, polohy alebo počtu cifier.", "Spočítaj každú skupinu zvlášť a skontroluj, že nič nechýba ani sa nezapočítalo dvakrát.", "Sčítaj skupiny."],
+      pasce: "Nesystematické počítanie (niečo sa vynechá alebo zdvojí); zabudnutá skupina s jednociferným/najmenším tvarom.",
+      cas: "s trikom ~1–2 min, bez systému 3–5 min a chyby",
+    },
+    delitelnost_prvocisla: {
+      n: "Deliteľnosť, prvočísla, NSD/NSN",
+      spoznas: "Násobky, delitele, zvyšky, „koľkými nulami končí súčin“, najmenší spoločný násobok, prvočíselný rozklad.",
+      postup: ["Rozlož čísla na prvočinitele.", "Použi kritérium deliteľnosti (3 a 9 – ciferný súčet, 4 – posledné dve cifry, 5 a 10 – posledná cifra).", "Pri nulách na konci počítaj dvojice 2·5."],
+      pasce: "Zabudnúť, že 1 nie je prvočíslo; pri deliteľnosti 12 skúšať len 3 alebo len 4; pri počte násobkov v intervale nepozrieť krajné čísla.",
+      cas: "s trikom ~1 min, narovinu skúšaním 3–4 min",
+    },
+    rovnica_z_textu: {
+      n: "Zostav rovnicu alebo vyjadri cez jednu neznámu",
+      spoznas: "Slovná úloha o veku, počte kusov, peniazoch, kde sa zadáva vzťah medzi viacerými veličinami.",
+      postup: ["Pomenuj najmenšiu/najjednoduchšiu veličinu písmenom.", "Ostatné veličiny vyjadri cez ňu podľa textu.", "Zostav rovnicu z celkového súčtu alebo rozdielu a vyrieš.", "Skontroluj dosadením do textu."],
+      pasce: "Nesprávne pomenovanie („o 3 viac“ vs. „3-krát viac“); zabudnutá kontrola zadania.",
+      cas: "s rovnicou ~1–2 min, skúšaním niekedy dlhšie",
+    },
+    poradie_operacii: {
+      n: "Poradie operácií, znamienka, zátvorky",
+      spoznas: "Dlhý výraz so zátvorkami (aj vnorenými), zápornými číslami, násobením a delením.",
+      postup: ["Počítaj od vnútorných zátvoriek von.", "Najprv násobenie a delenie zľava doprava, potom sčítanie a odčítanie.", "Pri záporných číslach si zapíš znamienko pred každým krokom."],
+      pasce: "Znamienko mínus pred zátvorkou; delenie sprava doľava; prepis chyby pri dlhom výraze.",
+      cas: "s poriadkom ~1 min",
+    },
+    percenta_pomer: {
+      n: "Percentá a pomery cez koeficient",
+      spoznas: "Zľava, zdraženie, úrok, delenie v pomere, úmernosť.",
+      postup: ["Ber pôvodnú hodnotu ako 100 % (alebo 1).", "Zmenu zapíš ako násobok (zľava 20 % = ·0,8; zvýšenie o 3 % = ·1,03).", "Pri pomere delení spočítaj diely a hodnotu jedného dielu."],
+      pasce: "Percentá z rôznych základov (zľava po zdražení nie je návrat na pôvodnú cenu); sčítanie percent.",
+      cas: "s koeficientom ~1 min",
+    },
+    posledna_cifra_zvysok: {
+      n: "Posledná cifra, ciferný súčet, zvyšok",
+      spoznas: "„Akou cifrou končí…“, „aký je zvyšok…“, obrovský súčin alebo mocnina.",
+      postup: ["Nepočítaj celý výsledok, stačí posledná cifra (alebo zvyšok).", "Pri súčine ber len posledné cifry činiteľov.", "Pri mocninách hľadaj opakovanie cyklu posledných cifier."],
+      pasce: "Pri rozdiele s veľkými číslami nezabudnúť na „požičanie“; zameniť ciferný súčet a poslednú cifru.",
+      cas: "s trikom ~0,5 min, narovinu je to nepočítateľné",
+    },
+    zlomky_menovatel: {
+      n: "Zlomky: spoločný menovateľ, prevrátená hodnota",
+      spoznas: "Sčítanie, porovnanie, deliteľ zlomkom, „sedmina čísla“, zlomok z celku.",
+      postup: ["Prevedi na spoločného menovateľa alebo na desatinné číslo.", "Delenie zlomkom = násobenie prevrátenou hodnotou.", "Výsledok skráť na základný tvar."],
+      pasce: "Sčítanie čitateľov aj menovateľov; zabudnuté skrátenie; zlomok z čísla vs. zlomok čísla.",
+      cas: "s trikom ~1 min",
+    },
+    vzor_perioda: {
+      n: "Hľadanie vzoru a periodicity",
+      spoznas: "Opakujúci sa rad (PYTAGORIÁDAPYTAGORIÁDA…), „na 905. mieste“, súčet radu čísel.",
+      postup: ["Zisti dĺžku periódy.", "Vydeľ polohu dĺžkou periódy a pozri zvyšok.", "Pri súčte radu použi Gaussov trik: spáruj prvý s posledným."],
+      pasce: "Keď je zvyšok 0, ide o poslednú pozíciu periódy, nie prvú; chyba pri počte členov radu (±1).",
+      cas: "s trikom ~1 min, vypisovaním až 5 min",
+    },
+    preved_jednotky: {
+      n: "Zjednoť jednotky",
+      spoznas: "Dĺžky, hmotnosti, časy a rýchlosti v rôznych jednotkách (m, dm, cm; km/h a m/s).",
+      postup: ["Premeň všetko na jednu jednotku ešte pred počítaním.", "Ak treba, premeň výsledok do požadovanej jednotky."],
+      pasce: "Miešanie jednotiek v jednom výraze; u plôch a objemov sa prevodový faktor umocňuje.",
+      cas: "~1 min, ale chyby sa robia rýchlo",
+    },
+    kombinatoricke_pravidlo: {
+      n: "Kombinatorické pravidlo",
+      spoznas: "Počet dvojíc, ciest, výberov, skupín, „koľkými spôsobmi“.",
+      postup: ["Rozhodni, či záleží na poradí.", "Pravidlo súčinu: počty možností na každom kroku vynásob.", "Dvojice z n objektov: n·(n−1) : 2."],
+      pasce: "Dvojité započítanie dvojíc; zabudnúť na obmedzenie (číslo nesmie začínať nulou).",
+      cas: "s pravidlom ~1 min",
+    },
+    priemer_sucet_rozdiel: {
+      n: "Priemer a súčtovo-rozdielová metóda",
+      spoznas: "Priemerná hodnota, zmena priemeru, dve veličiny so známym súčtom a rozdielom.",
+      postup: ["Priemer = súčet : počet, takže súčet = priemer · počet.", "Pri súčte a rozdiele: menšie = (súčet − rozdiel) : 2, väčšie = menšie + rozdiel."],
+      pasce: "Zabudnúť, že po pridaní hodnoty sa mení počet prvkov.",
+      cas: "~1 min",
+    },
+    zaokruhlenie_desatiny: {
+      n: "Zaokrúhľovanie a desatinné čísla",
+      spoznas: "„Zaokrúhlite na desatiny/jednotky“, násobenie a delenie 0,1; 0,01…",
+      postup: ["Pri zaokrúhľovaní sa pozeraj len na nasledujúcu cifru.", "Násobenie a delenie mocninami 10 je posun čiarky."],
+      pasce: "Zaokrúhľovať po častiach (zaokrúhli sa až výsledok, ak to zadanie nehovorí inak); pozícia desatinnej čiarky.",
+      cas: "~0,5–1 min",
+    },
+    skusanie_pripady: {
+      n: "Skúšanie a špeciálne prípady",
+      spoznas: "Úloha, kde nevieš vzorec: vyskúšaj malé čísla, krajné prípady.",
+      postup: ["Vyskúšaj malé hodnoty a hľadaj zákonitosť.", "Vyber obmedzenia, ktoré znížia počet možností.", "Over výsledok dosadením."],
+      pasce: "Skúšať bez systému a zastaviť sa po prvom vyhovujúcom, keď sa pýta najmenšie/najväčšie.",
+      cas: "2–4 min",
+    },
+    odhad_porovnanie: {
+      n: "Odhad a porovnanie bez počítania",
+      spoznas: "„Vyberte najväčší výsledok“, veľké čísla, ktorých presná hodnota nie je nutná.",
+      postup: ["Zaokrúhli čísla a odhadni rád výsledku.", "Vylúč zjavne menšie možnosti.", "Presne počítaj len tesné prípady."],
+      pasce: "Zle odhadnutý rád; porovnanie čísel s rôznym počtom miest.",
+      cas: "s trikom ~0,5 min",
+    },
+    najhorsi_pripad: {
+      n: "Najhorší prípad (Dirichletov princíp)",
+      spoznas: "„Koľko najmenej treba vybrať, aby sme mali istotu…“ (ponožky, guľôčky, karty).",
+      postup: ["Predstav si najpesimistickejšie vyberanie.", "Spočítaj, koľko vyberieš, kým sa ešte nič nesplní.", "Pridaj jeden ťah navyše."],
+      pasce: "Zabudnúť na „+1“; zámena „aspoň“ a „práve“.",
+      cas: "s trikom ~0,5 min",
+    },
+    postup_odzadu: {
+      n: "Riešenie odzadu",
+      spoznas: "Známy je výsledok, sled krokov je opísaný dopredu („najprv…, potom…, zostalo…“).",
+      postup: ["Začni od výsledku.", "Každý krok vráť opačnou operáciou.", "Skontroluj dopredu."],
+      pasce: "Zabudnúť obrátiť poradie krokov.",
+      cas: "~1 min",
+    },
+    rozdelenie_obrazca: {
+      n: "Rozdelenie alebo doplnenie obrazca",
+      spoznas: "Útvar, ktorý sa dá rozstrihať na známe časti alebo doplniť na obdĺžnik/štvorec.",
+      postup: ["Rozdeľ útvar na jednoduché časti alebo ho doplň.", "Spočítaj obsahy častí; pri doplnení odpočítaj pridanú časť."],
+      pasce: "Odpočítať zlú časť; nezachovať rozmery.",
+      cas: "1–2 min",
+    },
+    iny: { n: "Iné / bez jednoznačného triku", spoznas: "Logické a špeciálne úlohy.", postup: [], pasce: "", cas: "" },
+  };
+})();
