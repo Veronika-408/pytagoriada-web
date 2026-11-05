@@ -18,6 +18,7 @@
     "2025/2026": { "P6": 20, "P7": 20, "P8": 19 },
     "2024/2025": { "P6": 21, "P7": 20, "P8": 10 },
     "2023/2024": { "P6": 16, "P7": 10, "P8": 15 },
+    "2022/2023": { "P6": 17, "P7": 17, "P8": 18 },
   };
   const POSLEDNY = Object.keys(POSTUP_OK).sort().reverse()[0];
   // hranica pre rok riešeného kola, ak ju poznáme; inak posledná známa
