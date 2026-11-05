@@ -13,6 +13,9 @@
   // celoštátne 12 (podľa výsledkových listín: „Podmienkou získania bodov za čas bolo získanie min. 12 bodov za úlohy.“)
   const PRAH_CAS = { "školské": 11, "okresné": 11, "celoštátne": 12 };
 
+  // hranica postupu zo školského do okresného kola (body spolu, vrátane bodov za čas) – podľa učiteľky, šk. rok 2025/2026
+  const POSTUP_OK = { rok: "2025/2026", "P6": 20, "P7": 20, "P8": 19 };
+
   let host, timer = null, volba = { kat: null, kolo: "školské", rok: "nahodny" };
   const kluc = () => "sutaz." + (P.profil() ? P.profil().k : "-");
   const histKluc = () => "sutaze." + (P.profil() ? P.profil().k : "-");
@@ -79,6 +82,7 @@
           h("li", null, `${pocet || "–"} úloh, čas ${LIMIT_MIN[volba.kolo]} minút.`),
           h("li", null, "Za každú správnu úlohu 1 bod."),
           h("li", null, `Za každé ušetrené ${MIN_ZA_BOD} minúty 1 bod navyše` + (PRAH_CAS[volba.kolo] ? ` (len ak máš aspoň ${PRAH_CAS[volba.kolo]} bodov za úlohy).` : ".")),
+          volba.kolo === "školské" && POSTUP_OK[volba.kat] ? h("li", null, `Do okresného kola sa v roku ${POSTUP_OK.rok} postupovalo s ${POSTUP_OK[volba.kat]} bodmi (spolu za úlohy aj čas).`) : null,
           h("li", null, "Keď si hotový/hotová, klikni „Odovzdať“. Po uplynutí času sa test odovzdá sám.")),
         k.length ? h("button", { class: "btn primary", type: "button", id: "s-start", onclick: zacni }, "Začať súťaž") : h("p", { class: "note warn" }, "Pre túto kategóriu a kolo nemáme celé kolo s odpoveďami.")));
   }
@@ -106,6 +110,15 @@
       h("div", { class: "row next-row" }, h("button", { class: "btn primary", type: "button", onclick: () => { if (confirm("Naozaj odovzdať?")) odovzdaj(); } }, "Odovzdať")));
   }
 
+  function postup(v) {
+    const hr = POSTUP_OK[v.kat];
+    if (v.kolo !== "školské" || !hr) return null;
+    const ok = v.spolu >= hr;
+    return h("p", { class: "note " + (ok ? "good-note" : "warn") },
+      ok ? `S ${v.spolu} bodmi by si postúpil(a) do okresného kola – hranica v roku ${POSTUP_OK.rok} bola ${hr} bodov.`
+         : `Na postup do okresného kola by ti chýbali ${hr - v.spolu} ${hr - v.spolu === 1 ? "bod" : hr - v.spolu < 5 ? "body" : "bodov"} – hranica v roku ${POSTUP_OK.rok} bola ${hr} bodov.`);
+  }
+
   function umiestnenie(v) {
     const zoznam = (P.HRANICE || {})[v.rok + "|" + v.kat];
     if (v.kolo !== "celoštátne" || !zoznam) return null;
@@ -124,7 +137,7 @@
         h("div", { class: "tile" }, h("div", { class: "tl" }, "Body za čas"), h("div", { class: "tv mono" }, v.bodyCas),
           v.prah && v.bodyUlohy < v.prah ? h("div", { class: "ts" }, `body za čas sú od ${v.prah} bodov za úlohy`) : null),
         h("div", { class: "tile" }, h("div", { class: "tl" }, "Spolu"), h("div", { class: "tv mono" }, v.spolu))),
-      umiestnenie(v),
+      umiestnenie(v), postup(v),
       h("h3", { class: "sec" }, "Úlohy"),
       v.riadky.map((r, i) => {
         const u = ul.get(r.id);
