@@ -114,7 +114,8 @@
     document.body.classList.add("locked");
     document.body.append(o);
   }
-  P.odhlasit = () => { P.store.write("ziak", null); prihlasenie(); };
+  // odhlásenie zabudne meno aj heslo – ďalší človek na tom istom počítači musí zadať heslo znova
+  P.odhlasit = () => { P.store.write("ziak", null); P.store.write("heslo", ""); prihlasenie(); };
 
   // ---------- hlavička: kto je prihlásený ----------
   function hlavicka() {
