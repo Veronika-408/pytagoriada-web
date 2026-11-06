@@ -9,8 +9,10 @@
   // ---------- heslo pre triedu ----------
   // Nie je to skutočná ochrana (stránka je verejná), len aby sa k úlohám nedostal hocikto náhodný.
   const fnv = (s) => { let x = 0x811c9dc5; for (const c of s) { x ^= c.codePointAt(0); x = Math.imul(x, 0x01000193) >>> 0; } return x.toString(16); };
-  const hesloHash = (s) => fnv("pyt|" + String(s || "").trim().toLowerCase());
-  const hesloOk = () => !window.PYT_HESLO || P.store.read("heslo", "") === window.PYT_HESLO;
+  const hesloHash = (s) => fnv("pyt|" + P.norm(String(s || "").trim()));   // bez ohľadu na veľké písmená a diakritiku
+  // viac hesiel (napr. pre dve triedy): window.PYT_HESLO je zoznam odtlačkov
+  const HESLA = [].concat(window.PYT_HESLO || []).filter(Boolean);
+  const hesloOk = () => !HESLA.length || HESLA.includes(P.store.read("heslo", ""));
 
   // ---------- profily (viac žiakov môže používať ten istý počítač) ----------
   const profilKluc = (meno) => P.norm(meno).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -86,9 +88,10 @@
       let kat = stary ? stary.kat : "P6";
       const katBtns = h("div", { class: "chips" }, P.KATEGORIE.map((k) => h("button", { class: "chip", type: "button", "aria-pressed": kat === k, onclick: (e) => { kat = k; katBtns.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", b.textContent === k)); } }, k)));
       const potvrd = () => {
-        if (window.PYT_HESLO && !hesloOk()) {
-          if (hesloHash(heslo.value) !== window.PYT_HESLO) { chyba = "Heslo nie je správne."; kresli(); return; }
-          P.store.write("heslo", window.PYT_HESLO);
+        if (HESLA.length && !hesloOk()) {
+          const hh = hesloHash(heslo.value);
+          if (!HESLA.includes(hh)) { chyba = "Heslo nie je správne."; kresli(); return; }
+          P.store.write("heslo", hh);
         }
         const m = meno.value.trim();
         if (!m) { chyba = "Napíš svoje meno alebo prezývku."; kresli(); return; }
@@ -99,13 +102,13 @@
       o.replaceChildren(h("form", { class: "login box", onsubmit: (e) => { e.preventDefault(); potvrd(); } },
         h("h2", null, "Tréning na Pytagoriádu"),
         h("p", { class: "note" }, "Úlohy z minulých ročníkov Pytagoriády (P6–P8). Rieš, kontroluj si odpovede a sleduj svoj pokrok."),
-        window.PYT_HESLO && !hesloOk() ? h("div", { class: "field" }, h("label", { for: "l-heslo" }, "Heslo triedy"), heslo) : null,
+        HESLA.length && !hesloOk() ? h("div", { class: "field" }, h("label", { for: "l-heslo" }, "Heslo triedy"), heslo) : null,
         h("div", { class: "field" }, h("label", { for: "l-meno" }, "Ako sa voláš?"), meno),
         h("div", { class: "field" }, h("label", null, "Tvoja kategória"), katBtns),
         chyba ? h("p", { class: "note warn", role: "alert" }, chyba) : null,
         h("button", { class: "btn primary", type: "submit", id: "l-ok" }, "Začať"),
         h("p", { class: "note small" }, "Tvoje meno a výsledky sa ukladajú len v tomto prehliadači, nikam sa neposielajú.")));
-      setTimeout(() => (window.PYT_HESLO && !hesloOk() ? heslo : meno).focus(), 0);
+      setTimeout(() => (HESLA.length && !hesloOk() ? heslo : meno).focus(), 0);
     }
     kresli();
     document.body.classList.add("locked");
