@@ -119,6 +119,18 @@ button{font:inherit;color:inherit}
 .badge.own{color:var(--good);background:var(--good-bg);border-color:transparent}
 .badge.warn{color:var(--warn);background:var(--warn-bg);border-color:transparent;font-family:inherit}
 .zadanie{font-size:.98rem;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+/* pätička s autorkou (rovnaká ako v Meste čísel) */
+.credit{max-width:1100px;margin:2rem auto 0;padding:1.4rem 16px 2.5rem;border-top:2px dashed var(--line);display:flex;align-items:center;gap:1rem;color:var(--ink-soft);font-size:.92rem}
+.credit b{color:var(--ink)}
+.credit .li{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;text-decoration-thickness:2px;display:inline-flex;align-items:center;gap:6px}
+.credit .li:hover{text-decoration-color:#0a66c2}
+.li-icon{width:18px;height:18px;flex:none}
+.li-icon rect{fill:#0a66c2}
+.credit-mark{flex:none;width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:.95rem;border:2px solid var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* na stránke Databázy nech pätička nezakrýva lištu pracovného listu */
+@media print{.credit{display:none!important}}
+
 /* žiacka verzia (js/ziak.js) */
 body.locked{overflow:hidden}
 .login-wrap{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
